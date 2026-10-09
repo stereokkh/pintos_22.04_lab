@@ -230,7 +230,12 @@ wakeup_less(const struct list_elem *a, const struct list_elem *b, void *aux){
 
 	return at < bt;
 }
-
+static bool
+ready_order(const struct list_elem *a, const struct list_elem *b, void *aux){
+		int64_t at = list_entry(a, struct thread, elem)->priority;
+	int64_t bt = list_entry(b, struct thread, elem)->priority;
+	return at > bt;
+}
 void
 thread_sleep(int64_t ticks){
 	enum intr_level old_level = intr_disable();
@@ -280,7 +285,7 @@ thread_unblock (struct thread *t) {
 
 	old_level = intr_disable ();
 	ASSERT (t->status == THREAD_BLOCKED);
-	list_push_back (&ready_list, &t->elem);
+	list_insert_ordered (&ready_list, &t->elem, ready_order, NULL);
 	t->status = THREAD_READY;
 	intr_set_level (old_level);
 }
@@ -343,7 +348,7 @@ thread_yield (void) {
 
 	old_level = intr_disable ();
 	if (curr != idle_thread)
-		list_push_back (&ready_list, &curr->elem);
+		list_insert_ordered (&ready_list, &curr->elem, ready_order, NULL);
 	do_schedule (THREAD_READY);
 	intr_set_level (old_level);
 }
