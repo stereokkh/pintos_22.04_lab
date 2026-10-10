@@ -66,6 +66,8 @@ static void do_schedule(int status);
 static void schedule (void);
 static tid_t allocate_tid (void);
 
+static bool wakeup_tick_less (const struct list_elem *a, const struct list_elem *b, void *aux);
+
 
 
 /* Returns true if T appears to point to a valid thread. */
@@ -223,12 +225,13 @@ thread_create (const char *name, int priority,
    This function must be called with interrupts turned off.  It
    is usually a better idea to use one of the synchronization
    primitives in synch.h. */
-static bool 
-wakeup_less(const struct list_elem *a, const struct list_elem *b, void *aux){
-	int64_t at = list_entry(a, struct thread, elem)->wake_ticks;
-	int64_t bt = list_entry(b, struct thread, elem)->wake_ticks;
+// sleep_list 정렬용 비교 함수. A의 깨어날 시각이 B보다 빠르면 true를 반환한다.
+static bool
+wakeup_tick_less (const struct list_elem *a, const struct list_elem *b, void *aux UNUSED) {
+	const struct thread *ta = list_entry (a, struct thread, elem);
+	const struct thread *tb = list_entry (b, struct thread, elem);
 
-	return at < bt;
+	return ta->wake_ticks < tb->wake_ticks;
 }
 static bool
 ready_order(const struct list_elem *a, const struct list_elem *b, void *aux){
@@ -243,7 +246,7 @@ thread_sleep(int64_t ticks){
 
 	cur->wake_ticks = ticks;
 
-	list_insert_ordered(&sleep_list, &cur->elem, wakeup_less, NULL);
+	list_insert_ordered(&sleep_list, &cur->elem, wakeup_tick_less, NULL);
 
 	thread_block();
 	intr_set_level(old_level);

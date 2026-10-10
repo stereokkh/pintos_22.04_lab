@@ -97,6 +97,9 @@ timer_elapsed (int64_t then) {
 
 void
 timer_sleep (int64_t ticks) {
+
+	ASSERT (intr_get_level () == INTR_ON);
+	
 	if(ticks <= 0) return;
 
 	int64_t wakeup_tick = timer_ticks() + ticks;
