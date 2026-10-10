@@ -214,7 +214,7 @@ thread_create (const char *name, int priority,
 
 	/* Add to run queue. */
 	thread_unblock (t);
-
+	thread_check_preemption();
 	return tid;
 }
 
@@ -290,7 +290,32 @@ thread_unblock (struct thread *t) {
 	ASSERT (t->status == THREAD_BLOCKED);
 	list_insert_ordered (&ready_list, &t->elem, ready_order, NULL);
 	t->status = THREAD_READY;
+
 	intr_set_level (old_level);
+
+}
+
+void 
+thread_check_preemption(void){
+	enum intr_level old_level = intr_disable();
+	//ready 빈 상황
+	if(list_empty(&ready_list)){
+		intr_set_level(old_level);
+		return;
+	} 
+	//정렬된 ready list 이므로 priority 최대값만 cur thread 랑 비교
+	struct thread *top = list_entry(list_front(&ready_list), struct thread, elem);
+	bool preempt = top -> priority > thread_current()->priority;
+
+	intr_set_level(old_level);
+	//우선순위가 cur thread가 높은 경우 pass
+	if(!preempt) return;
+	//우선순위가 cur thread가 낮은 경우 처리
+	if (intr_context()) {
+		intr_yield_on_return();
+	} else {
+	thread_yield();
+	}
 }
 
 /* Returns the name of the running thread. */
@@ -360,6 +385,7 @@ thread_yield (void) {
 void
 thread_set_priority (int new_priority) {
 	thread_current ()->priority = new_priority;
+	thread_check_preemption();
 }
 
 /* Returns the current thread's priority. */
