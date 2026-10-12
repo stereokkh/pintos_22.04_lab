@@ -1,4 +1,4 @@
-/* timer_sleep(0)을 테스트한다. 즉시 반환되어야 한다. */
+/* Tests timer_sleep(0), which should return immediately. */
 
 #include <stdio.h>
 #include "tests/threads/tests.h"

@@ -1,6 +1,6 @@
-/* 파일을 0바이트에서 2,134바이트까지 한 번에 37바이트씩 늘리며,
-   각 단계에서 파일 크기가 올바르게 보고되는지
-   확인한다. */
+/* Grows a file from 0 bytes to 2,134 bytes, 37 bytes at a time,
+   and checks that the file's size is reported correctly at each
+   step. */
 
 #include <syscall.h>
 #include "tests/filesys/seq-test.h"

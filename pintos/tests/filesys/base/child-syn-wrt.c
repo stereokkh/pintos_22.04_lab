@@ -1,6 +1,6 @@
-/* syn-read 테스트의 자식 프로세스.
-   테스트 파일의 일부분에 쓴다. 다른 프로세스들은 같은 시각에
-   파일의 다른 부분에 쓰게 된다. */
+/* Child process for syn-read test.
+   Writes into part of a test file.  Other processes will be
+   writing into other parts at the same time. */
 
 #include <random.h>
 #include <stdlib.h>

@@ -1,5 +1,5 @@
-/* 유효하지 않은 fd를 닫으려 한다. 이는 조용히 실패하거나
-   종료 코드 -1로 종료되어야 한다. */
+/* Tries to close an invalid fd, which must either fail silently
+   or terminate with exit code -1. */
 
 #include <syscall.h>
 #include "tests/main.h"

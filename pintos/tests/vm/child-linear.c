@@ -1,6 +1,6 @@
-/* page-parallel의 자식 프로세스.
-   1MB의 0을 암호화한 뒤 복호화하고, 다시 0으로
-   돌아왔는지 확인한다. */
+/* Child process of page-parallel.
+   Encrypts 1 MB of zeros, then decrypts it, and ensures that
+   the zeros are back. */
 
 #include <string.h>
 #include "tests/arc4.h"
@@ -19,15 +19,15 @@ main (int argc, char *argv[])
   struct arc4 arc4;
   size_t i;
 
-  /* 0들을 암호화한다. */
+  /* Encrypt zeros. */
   arc4_init (&arc4, key, strlen (key));
   arc4_crypt (&arc4, buf, SIZE);
 
-  /* 복호화하여 0으로 되돌린다. */
+  /* Decrypt back to zeros. */
   arc4_init (&arc4, key, strlen (key));
   arc4_crypt (&arc4, buf, SIZE);
 
-  /* 모두 0인지 확인한다. */
+  /* Check that it's all zeros. */
   for (i = 0; i < SIZE; i++)
     if (buf[i] != '\0')
       fail ("byte %zu != 0", i);

@@ -42,7 +42,7 @@ static const struct test tests[] =
 
 static const char *test_name;
 
-/* NAME이라는 이름의 테스트를 실행한다. */
+/* Runs the test named NAME. */
 void
 run_test (const char *name) 
 {
@@ -60,9 +60,9 @@ run_test (const char *name)
   PANIC ("no test named \"%s\"", name);
 }
 
-/* printf()처럼 FORMAT을 출력하되,
-   출력 앞에 테스트 이름을 붙이고
-   뒤에 개행 문자를 붙인다. */
+/* Prints FORMAT as if with printf(),
+   prefixing the output by the name of the test
+   and following it with a new-line character. */
 void
 msg (const char *format, ...) 
 {
@@ -75,10 +75,10 @@ msg (const char *format, ...)
   putchar ('\n');
 }
 
-/* printf()처럼 실패 메시지 FORMAT을 출력하되,
-   출력 앞에 테스트 이름과 FAIL:을 붙이고
-   뒤에 개행 문자를 붙인 다음,
-   커널 패닉을 일으킨다. */
+/* Prints failure message FORMAT as if with printf(),
+   prefixing the output by the name of the test and FAIL:
+   and following it with a new-line character,
+   and then panics the kernel. */
 void
 fail (const char *format, ...) 
 {
@@ -93,7 +93,7 @@ fail (const char *format, ...)
   PANIC ("test failed");
 }
 
-/* 현재 테스트가 통과했음을 알리는 메시지를 출력한다. */
+/* Prints a message indicating the current test passed. */
 void
 pass (void) 
 {

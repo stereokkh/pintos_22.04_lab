@@ -1,5 +1,5 @@
-/* 디렉터리를 하나 만든 뒤,
-   그 안에 파일 50개를 만든다. */
+/* Creates a directory,
+   then creates 50 files in that directory. */
 
 #define FILE_CNT 50
 #define DIRECTORY "/x"

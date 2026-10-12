@@ -1,5 +1,5 @@
-/* mmap된 영역은 메모리에서 데이터가 실제로 수정된 경우에만
-   munmap 시 파일에 다시 기록되는지 검증한다. */
+/* Verifies that mmap'd regions are only written back on munmap
+   if the data was actually modified in memory. */
 
 #include <string.h>
 #include <syscall.h>
@@ -16,30 +16,30 @@ test_main (void)
   int handle;
   void *map;
 
-  /* 파일을 열고, 매핑하고, 데이터를 검증한다. */
+  /* Open file, map, verify data. */
   CHECK ((handle = open ("sample.txt")) > 1, "open \"sample.txt\"");
  
 	CHECK ((map = mmap (actual, 4096, 0, handle, 0)) != MAP_FAILED, "mmap \"sample.txt\"");
   if (memcmp (actual, sample, strlen (sample)))
     fail ("read of mmap'd file reported bad data");
 
-  /* 파일을 수정한다. */
+  /* Modify file. */
   CHECK (write (handle, overwrite, strlen (overwrite))
          == (int) strlen (overwrite),
          "write \"sample.txt\"");
 
-  /* 매핑을 닫는다. 매핑을 통해 수정하지 않았으므로 데이터는
-     다시 기록되지 않아야 한다. */
+  /* Close mapping.  Data should not be written back, because we
+     didn't modify it via the mapping. */
   msg ("munmap \"sample.txt\"");
   munmap (map);
 
-  /* 파일을 다시 읽는다. */
+  /* Read file back. */
   msg ("seek \"sample.txt\"");
   seek (handle, 0);
   CHECK (read (handle, buffer, sizeof buffer) == sizeof buffer,
          "read \"sample.txt\"");
 
-  /* 파일 덮어쓰기가 제대로 되었는지 검증한다. */
+  /* Verify that file overwrite worked. */
   if (memcmp (buffer, overwrite, strlen (overwrite))
       || memcmp (buffer + strlen (overwrite), sample + strlen (overwrite),
                  strlen (sample) - strlen (overwrite))) 

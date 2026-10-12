@@ -1,4 +1,4 @@
-/* 빈 문자열을 이름으로 파일을 열려고 시도한다. */
+/* Tries to open a file with the empty string as its name. */
 
 #include <syscall.h>
 #include "tests/lib.h"

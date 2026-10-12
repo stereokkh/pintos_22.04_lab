@@ -1,4 +1,4 @@
-/* 자식 프로세스 하나를 실행하고 기다린다. */
+/* Executes and waits for a single child process. */
 
 #include <syscall.h>
 #include "tests/lib.h"

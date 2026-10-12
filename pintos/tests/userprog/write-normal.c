@@ -1,4 +1,4 @@
-/* 가장 일반적인 방법으로 파일에 써 본다. */
+/* Try writing a file in the most normal way. */
 
 #include <syscall.h>
 #include "tests/userprog/sample.inc"

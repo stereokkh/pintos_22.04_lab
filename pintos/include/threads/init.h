@@ -6,13 +6,13 @@
 #include <stddef.h>
 #include <stdint.h>
 
-/* 물리 메모리 크기, 4kB 페이지 단위. */
+/* Physical memory size, in 4 kB pages. */
 extern size_t ram_pages;
 
-/* 커널 매핑만 가진 페이지 맵 레벨 4. */
+/* Page map level 4 with kernel mappings only. */
 extern uint64_t *base_pml4;
 
-/* -q: 커널 작업이 끝나면 전원을 끌 것인가? */
+/* -q: Power off when kernel tasks complete? */
 extern bool power_off_when_done;
 
 void power_off (void) NO_RETURN;

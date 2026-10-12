@@ -1,5 +1,5 @@
-/* 디렉터리를 만들고 제거한 뒤, 정말로 사라졌는지
-   확인한다. */
+/* Creates and removes a directory, then makes sure that it's
+   really gone. */
 
 #include <syscall.h>
 #include "tests/lib.h"

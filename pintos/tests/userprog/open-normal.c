@@ -1,4 +1,4 @@
-/* 파일을 연다. */
+/* Open a file. */
 
 #include <syscall.h>
 #include "tests/lib.h"

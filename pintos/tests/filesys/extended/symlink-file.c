@@ -1,5 +1,5 @@
-/* 두 파일을 병렬로 늘리고, 심볼릭 링크를 사용해 그 내용이
-   올바른지 확인한다. */
+/* Grows two files in parallel and checks that their contents are
+   correct using symlink. */
 
 #include <stdio.h>
 #include <random.h>

@@ -7,22 +7,22 @@
 #include "threads/interrupt.h"
 #include "threads/vaddr.h"
 
-/* VGA 텍스트 화면 지원. 자세한 내용은 [FREEVGA]를 참고하라. */
+/* VGA text screen support.  See [FREEVGA] for more information. */
 
-/* 텍스트 화면의 열과 행 개수. */
+/* Number of columns and rows on the text display. */
 #define COL_CNT 80
 #define ROW_CNT 25
 
-/* 현재 커서 위치. (0,0)은 화면의 왼쪽 위
-   모서리이다. */
+/* Current cursor position.  (0,0) is in the upper left corner of
+   the display. */
 static size_t cx, cy;
 
-/* 검은 배경에 회색 글자를 위한 속성값. */
+/* Attribute value for gray text on a black background. */
 #define GRAY_ON_BLACK 0x07
 
-/* 프레임버퍼. [FREEVGA]의 "VGA Text Mode Operation"을 참고하라.
-   (x,y) 위치의 문자는 fb[y][x][0]이다.
-   (x,y) 위치의 속성은 fb[y][x][1]이다. */
+/* Framebuffer.  See [FREEVGA] under "VGA Text Mode Operation".
+   The character at (x,y) is fb[y][x][0].
+   The attribute at (x,y) is fb[y][x][1]. */
 static uint8_t (*fb)[COL_CNT][2];
 
 static void clear_row (size_t y);
@@ -31,10 +31,10 @@ static void newline (void);
 static void move_cursor (void);
 static void find_cursor (size_t *x, size_t *y);
 
-/* VGA 텍스트 화면을 초기화한다. */
+/* Initializes the VGA text display. */
 static void
 init (void) {
-	/* 이미 초기화되었는가? */
+	/* Already initialized? */
 	static bool inited;
 	if (!inited) {
 		fb = ptov (0xb8000);
@@ -43,12 +43,12 @@ init (void) {
 	}
 }
 
-/* C를 VGA 텍스트 화면에 쓴다. 제어 문자는 관례적인
-   방식으로 해석한다.  */
+/* Writes C to the VGA text display, interpreting control
+   characters in the conventional ways.  */
 void
 vga_putc (int c) {
-	/* 콘솔에 쓸 수 있는 인터럽트 핸들러를 배제하기 위해
-	   인터럽트를 비활성화한다. */
+	/* Disable interrupts to lock out interrupt handlers
+	   that might write to the console. */
 	enum intr_level old_level = intr_disable ();
 
 	init ();
@@ -85,13 +85,13 @@ vga_putc (int c) {
 			break;
 	}
 
-	/* 커서 위치 갱신. */
+	/* Update cursor position. */
 	move_cursor ();
 
 	intr_set_level (old_level);
 }
 
-/* 화면을 지우고 커서를 왼쪽 위로 옮긴다. */
+/* Clears the screen and moves the cursor to the upper left. */
 static void
 cls (void) {
 	size_t y;
@@ -103,7 +103,7 @@ cls (void) {
 	move_cursor ();
 }
 
-/* Y행을 공백으로 지운다. */
+/* Clears row Y to spaces. */
 static void
 clear_row (size_t y) {
 	size_t x;
@@ -115,9 +115,9 @@ clear_row (size_t y) {
 	}
 }
 
-/* 커서를 화면의 다음 줄 첫 번째 열로 옮긴다. 커서가
-   이미 화면의 마지막 줄에 있으면 화면을 한 줄 위로
-   스크롤한다. */
+/* Advances the cursor to the first column in the next line on
+   the screen.  If the cursor is already on the last line on the
+   screen, scrolls the screen upward one line. */
 static void
 newline (void) {
 	cx = 0;
@@ -130,19 +130,19 @@ newline (void) {
 	}
 }
 
-/* 하드웨어 커서를 (cx,cy)로 옮긴다. */
+/* Moves the hardware cursor to (cx,cy). */
 static void
 move_cursor (void) {
-	/* [FREEVGA]의 "Manipulating the Text-mode Cursor"를 참고하라. */
+	/* See [FREEVGA] under "Manipulating the Text-mode Cursor". */
 	uint16_t cp = cx + COL_CNT * cy;
 	outw (0x3d4, 0x0e | (cp & 0xff00));
 	outw (0x3d4, 0x0f | (cp << 8));
 }
 
-/* 현재 하드웨어 커서 위치를 (*X,*Y)에 읽어 온다. */
+/* Reads the current hardware cursor position into (*X,*Y). */
 static void
 find_cursor (size_t *x, size_t *y) {
-	/* [FREEVGA]의 "Manipulating the Text-mode Cursor"를 참고하라. */
+	/* See [FREEVGA] under "Manipulating the Text-mode Cursor". */
 	uint16_t cp;
 
 	outb (0x3d4, 0x0e);

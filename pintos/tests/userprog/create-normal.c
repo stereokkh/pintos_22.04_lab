@@ -1,4 +1,4 @@
-/* 일반적인 빈 파일을 만든다. */
+/* Creates an ordinary empty file. */
 
 #include "tests/lib.h"
 #include "tests/main.h"

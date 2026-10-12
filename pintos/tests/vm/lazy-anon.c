@@ -1,4 +1,4 @@
-/* 익명 페이지가 지연 로딩되는지 확인한다  */
+/* Checks if anonymous pages are lazy loaded  */
 
 #include <string.h>
 #include <syscall.h>
@@ -21,7 +21,7 @@ test_main (void)
 
 	msg ("initial pages status");
 	for (i = 0 ; i < CHUNK_PAGE_COUNT ; i++) {
-		// buf의 모든 페이지는 아직 로드되지 않아야 한다.
+		// All pages for buf should not be loaded yet.
 		pa = get_phys_addr(&buf[i*PAGE_SIZE]);
 		CHECK (pa == 0, "check if page is not loaded");
 	}
@@ -29,11 +29,11 @@ test_main (void)
 	msg ("load pages");
 	for (i = 0 ; i < CHUNK_PAGE_COUNT ; i++) {
 		msg ("load page [%zu]", i);
-		// 여기서 페이지가 로드된다.
+		// Pages are loaded here.
 		buf[i*PAGE_SIZE] = i;
 		for (j = 0 ; j < CHUNK_PAGE_COUNT ; j++) {
-			// 접근된 페이지는 로드되어 있어야 한다
-			// 접근되지 않은 페이지는 로드되어 있지 않아야 한다.
+			// Pages that have been accessed should be loaded
+			// Pages that have not been accessed should not be loaded.
 			pa = get_phys_addr(&buf[j*PAGE_SIZE]);
 			if (j <= i) {
 				CHECK (pa != 0, "check if page is loaded");

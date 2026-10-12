@@ -1,10 +1,10 @@
-/* lib/kernel/list.c를 위한 테스트 프로그램.
+/* Test program for lib/kernel/list.c.
 
-   Pintos의 다른 곳에서 충분히 테스트되지 않는 리스트 기능을
-   테스트하려 한다.
+   Attempts to test the list functionality that is not
+   sufficiently tested elsewhere in Pintos.
 
-   제출한 프로젝트에 대해 실행하는 테스트는 아니다.
-   완결성을 위해 여기에 두었다.
+   This is not a test we will run on your submitted projects.
+   It is here for completeness.
 */
 
 #undef NDEBUG
@@ -12,16 +12,17 @@
 #include <list.h>
 #include <random.h>
 #include <stdio.h>
-#include "threads/test.h"
+#include "threads/tests.h"
 
-/* 테스트할 연결 리스트의 최대 원소 수. */
+/* Maximum number of elements in a linked list that we will
+   test. */
 #define MAX_SIZE 64
 
-/* 연결 리스트 원소. */
+/* A linked list element. */
 struct value 
   {
-    struct list_elem elem;      /* 리스트 원소. */
-    int value;                  /* 항목 값. */
+    struct list_elem elem;      /* List element. */
+    int value;                  /* Item value. */
   };
 
 static void shuffle (struct value[], size_t);
@@ -30,7 +31,7 @@ static bool value_less (const struct list_elem *, const struct list_elem *,
 static void verify_list_fwd (struct list *, int size);
 static void verify_list_bkwd (struct list *, int size);
 
-/* 연결 리스트 구현을 테스트한다. */
+/* Test the linked list implementation. */
 void
 test (void) 
 {
@@ -49,17 +50,17 @@ test (void)
           struct list_elem *e;
           int i, ofs;
 
-          /* 0...SIZE 값을 무작위 순서로 VALUES에 넣는다. */
+          /* Put values 0...SIZE in random order in VALUES. */
           for (i = 0; i < size; i++)
             values[i].value = i;
           shuffle (values, size);
   
-          /* 리스트를 구성한다. */
+          /* Assemble list. */
           list_init (&list);
           for (i = 0; i < size; i++)
             list_push_back (&list, &values[i].elem);
 
-          /* 최소 원소와 최대 원소가 올바른지 검증한다. */
+          /* Verify correct minimum and maximum elements. */
           e = list_min (&list, value_less, NULL);
           ASSERT (size ? list_entry (e, struct value, elem)->value == 0
                   : e == list_begin (&list));
@@ -67,16 +68,16 @@ test (void)
           ASSERT (size ? list_entry (e, struct value, elem)->value == size - 1
                   : e == list_begin (&list));
 
-          /* 리스트를 정렬하고 검증한다. */
+          /* Sort and verify list. */
           list_sort (&list, value_less, NULL);
           verify_list_fwd (&list, size);
 
-          /* 리스트를 뒤집고 검증한다. */
+          /* Reverse and verify list. */
           list_reverse (&list);
           verify_list_bkwd (&list, size);
 
-          /* 섞은 뒤 list_insert_ordered()로 삽입하고,
-             순서를 검증한다. */
+          /* Shuffle, insert using list_insert_ordered(),
+             and verify ordering. */
           shuffle (values, size);
           list_init (&list);
           for (i = 0; i < size; i++)
@@ -84,7 +85,7 @@ test (void)
                                  value_less, NULL);
           verify_list_fwd (&list, size);
 
-          /* 일부 항목을 복제한 뒤 중복을 제거하고 검증한다. */
+          /* Duplicate some items, uniquify, and verify. */
           ofs = size;
           for (e = list_begin (&list); e != list_end (&list);
                e = list_next (e))
@@ -107,7 +108,7 @@ test (void)
   printf ("list: PASS\n");
 }
 
-/* ARRAY의 CNT개 원소를 무작위 순서로 섞는다. */
+/* Shuffles the CNT elements in ARRAY into random order. */
 static void
 shuffle (struct value *array, size_t cnt) 
 {
@@ -122,8 +123,8 @@ shuffle (struct value *array, size_t cnt)
     }
 }
 
-/* 값 A가 값 B보다 작으면 true, 아니면 false를
-   반환한다. */
+/* Returns true if value A is less than value B, false
+   otherwise. */
 static bool
 value_less (const struct list_elem *a_, const struct list_elem *b_,
             void *aux UNUSED) 
@@ -134,8 +135,8 @@ value_less (const struct list_elem *a_, const struct list_elem *b_,
   return a->value < b->value;
 }
 
-/* LIST를 정방향으로 순회했을 때 0...SIZE 값을 담고 있는지
-   검증한다. */
+/* Verifies that LIST contains the values 0...SIZE when traversed
+   in forward order. */
 static void
 verify_list_fwd (struct list *list, int size) 
 {
@@ -153,8 +154,8 @@ verify_list_fwd (struct list *list, int size)
   ASSERT (e == list_end (list));
 }
 
-/* LIST를 역방향으로 순회했을 때 0...SIZE 값을 담고 있는지
-   검증한다. */
+/* Verifies that LIST contains the values 0...SIZE when traversed
+   in reverse order. */
 static void
 verify_list_bkwd (struct list *list, int size) 
 {

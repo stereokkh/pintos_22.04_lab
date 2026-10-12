@@ -1,4 +1,4 @@
-/* child-linear 프로세스 4개를 동시에 실행한다. */
+/* Runs 4 child-linear processes at once. */
 
 #include <syscall.h>
 #include "tests/lib.h"

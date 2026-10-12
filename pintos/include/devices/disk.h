@@ -4,14 +4,14 @@
 #include <inttypes.h>
 #include <stdint.h>
 
-/* 디스크 섹터 하나의 바이트 크기. */
+/* Size of a disk sector in bytes. */
 #define DISK_SECTOR_SIZE 512
 
-/* 디스크 안에서 디스크 섹터의 인덱스.
- * 최대 2TB 디스크까지는 충분하다. */
+/* Index of a disk sector within a disk.
+ * Good enough for disks up to 2 TB. */
 typedef uint32_t disk_sector_t;
 
-/* printf()용 형식 지정자, 예:
+/* Format specifier for printf(), e.g.:
  * printf ("sector=%"PRDSNu"\n", sector); */
 #define PRDSNu PRIu32
 

@@ -1,5 +1,5 @@
-/* 128kB 파일을 만들고 메모리 매핑을 통해 그 안의 데이터를
-   반복해서 섞는다. */
+/* Creates a 128 kB file and repeatedly shuffles data in it
+   through a memory mapping. */
 
 #include <stdio.h>
 #include <string.h>
@@ -19,17 +19,17 @@ test_main (void)
   size_t i;
   int handle;
 
-  /* 파일을 만들고 mmap한다. */
+  /* Create file, mmap. */
   CHECK (create ("buffer", SIZE), "create \"buffer\"");
   CHECK ((handle = open ("buffer")) > 1, "open \"buffer\"");
   CHECK (mmap (buf, SIZE, 1, handle, 0) != MAP_FAILED, "mmap \"buffer\"");
 
-  /* 초기화. */
+  /* Initialize. */
   for (i = 0; i < SIZE; i++)
     buf[i] = i * 257;
   msg ("init: cksum=%lu", cksum (buf, SIZE));
 
-  /* 반복해서 섞는다. */
+  /* Shuffle repeatedly. */
   for (i = 0; i < 10; i++)
     {
       shuffle (buf, SIZE, 1);

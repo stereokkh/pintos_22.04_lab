@@ -3,17 +3,17 @@
 #include "devices/intq.h"
 #include "devices/serial.h"
 
-/* 키보드와 시리얼 포트로부터 들어온 키를 저장한다. */
+/* Stores keys from the keyboard and serial port. */
 static struct intq buffer;
 
-/* 입력 버퍼를 초기화한다. */
+/* Initializes the input buffer. */
 void
 input_init (void) {
 	intq_init (&buffer);
 }
 
-/* 입력 버퍼에 키를 추가한다.
-   인터럽트가 꺼져 있어야 하고 버퍼가 가득 차 있으면 안 된다. */
+/* Adds a key to the input buffer.
+   Interrupts must be off and the buffer must not be full. */
 void
 input_putc (uint8_t key) {
 	ASSERT (intr_get_level () == INTR_OFF);
@@ -23,8 +23,8 @@ input_putc (uint8_t key) {
 	serial_notify ();
 }
 
-/* 입력 버퍼에서 키를 하나 꺼낸다.
-   버퍼가 비어 있으면 키가 눌릴 때까지 기다린다. */
+/* Retrieves a key from the input buffer.
+   If the buffer is empty, waits for a key to be pressed. */
 uint8_t
 input_getc (void) {
 	enum intr_level old_level;
@@ -38,9 +38,9 @@ input_getc (void) {
 	return key;
 }
 
-/* 입력 버퍼가 가득 찼으면 true,
-   아니면 false를 반환한다.
-   인터럽트가 꺼져 있어야 한다. */
+/* Returns true if the input buffer is full,
+   false otherwise.
+   Interrupts must be off. */
 bool
 input_full (void) {
 	ASSERT (intr_get_level () == INTR_OFF);
